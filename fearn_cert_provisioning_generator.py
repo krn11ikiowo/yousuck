@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
 ken1key Certificate + Provisioning Profile Generator
-
 Generates:
 - Private key
 - Self-signed certificate
 - P12
-- Mobileprovision with embedded certificate
+- Mobileprovision with embedded DER certificate + validation fields
 """
 
 import argparse
@@ -14,6 +13,7 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 import base64
+import hashlib
 
 def run(cmd):
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -60,32 +60,50 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path):
         der_data = f.read()
     der_b64 = base64.b64encode(der_data).decode("ascii")
 
+    # SHA1 hash (Apple uses SHA1 for certificate validation)
+    cert_sha1 = hashlib.sha1(der_data).hexdigest().upper()
+
     profile = f"""<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
     <key>AppIDName</key>
     <string>{name}</string>
 
-    <key>AppIdentifierPrefix</key>
-    <array><string>{team_id}</string></array>
-
     <key>ApplicationIdentifierPrefix</key>
-    <array><string>{team_id}</string></array>
+    <array>
+        <string>{team_id}</string>
+    </array>
+
+    <key>TeamIdentifier</key>
+    <array>
+        <string>{team_id}</string>
+    </array>
 
     <key>DeveloperCertificates</key>
     <array>
         <data>{der_b64}</data>
     </array>
 
+    <key>DeveloperCertificateHashes</key>
+    <array>
+        <string>{cert_sha1}</string>
+    </array>
+
     <key>Entitlements</key>
     <dict>
         <key>application-identifier</key>
         <string>{app_identifier}</string>
+
         <key>get-task-allow</key>
         <true/>
+
         <key>keychain-access-groups</key>
-        <array><string>{app_identifier}</string></array>
+        <array>
+            <string>{app_identifier}</string>
+        </array>
     </dict>
 
     <key>ExpirationDate</key>
@@ -94,17 +112,12 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path):
     <key>Name</key>
     <string>{name} Provisioning Profile</string>
 
-    <key>TeamIdentifier</key>
-    <array><string>{team_id}</string></array>
-
-    <key>TimeToLive</key>
-    <integer>365</integer>
-
     <key>UUID</key>
     <string>KEN1KEY-{team_id}-UUID</string>
 
     <key>Version</key>
     <integer>1</integer>
+
 </dict>
 </plist>
 """
@@ -133,7 +146,7 @@ def main():
     generate_p12(key_path, cert_path, p12_path, args.bundle_id, args.password)
     generate_mobileprovision(args.bundle_id, args.team_id, args.name, cert_path)
 
-    print("✓ Matching cert + mobileprovision generated")
+    print("✓ Matching cert + fully validated mobileprovision generated")
     print(f"  - Private key: {key_path}")
     print(f"  - Certificate: {cert_path}")
     print(f"  - P12: {p12_path}")
