@@ -1,0 +1,6 @@
+name=com.kenen.ikiowk
+teamID=KRNAPPLO
+type=development
+note=ken1key self-signed cert for com.kenen.ikiowk
+p12=ken1key.p12
+mobileprovision=ken1key.mobileprovision
