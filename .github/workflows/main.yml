@@ -1,0 +1,55 @@
+name: ken1key-cert-generator
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-certs:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: false
+          fetch-depth: 0
+
+      - name: Rename generator to .py
+        run: |
+          mv "fearn_cert_provisioning_generator 2.txt" fearn_cert_provisioning_generator.py
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify OpenSSL
+        run: |
+          which openssl
+          openssl version
+
+      - name: Run ken1key certificate generator
+        run: |
+          python3 fearn_cert_provisioning_generator.py \
+            --bundle-id com.kenen.ikiowk \
+            --team-id LOCALTEAMID \
+            --name ken1key \
+            --password ken1pass \
+            --verbose
+
+      - name: Verify generated files
+        run: |
+          ls -R certs
+          test -f certs/ken1key.key
+          test -f certs/ken1key.crt
+          test -f certs/ken1key.p12
+          test -f certs/ken1key.mobileprovision
+
+      - name: Commit generated certs
+        run: |
+          git add certs
+          git commit -m "ken1key: generated matching certs + mobileprovision" || echo "no changes"
+          git push || echo "nothing to push"
