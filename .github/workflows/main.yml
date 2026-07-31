@@ -17,10 +17,6 @@ jobs:
           clean: false
           fetch-depth: 0
 
-      - name: Rename generator to .py
-        run: |
-          mv "fearn_cert_provisioning_generator 2.txt" fearn_cert_provisioning_generator.py
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
