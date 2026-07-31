@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>AppIDName</key>
+    <string>ken1key</string>
+
+    <key>AppIdentifierPrefix</key>
+    <array><string>KRNAPPLO</string></array>
+
+    <key>ApplicationIdentifierPrefix</key>
+    <array><string>KRNAPPLO</string></array>
+
+    <key>CreationDate</key>
+    <date>2026-07-31T13:42:18.887856</date>
+
+    <key>Platform</key>
+    <array><string>iOS</string></array>
+
+    <key>Entitlements</key>
+    <dict>
+        <key>application-identifier</key>
+        <string>KRNAPPLO.com.kenen.ikiowk</string>
+
+        <key>get-task-allow</key>
+        <true/>
+
+        <key>keychain-access-groups</key>
+        <array><string>KRNAPPLO.com.kenen.ikiowk</string></array>
+    </dict>
+
+    <key>ExpirationDate</key>
+    <date>2027-07-31T13:42:18.888178</date>
+
+    <key>Name</key>
+    <string>ken1key Provisioning Profile</string>
+
+    <key>TeamIdentifier</key>
+    <array><string>KRNAPPLO</string></array>
+
+    <key>TimeToLive</key>
+    <integer>365</integer>
+
+    <key>UUID</key>
+    <string>KEN1KEY-KRNAPPLO-UUID</string>
+
+    <key>Version</key>
+    <integer>1</integer>
+</dict>
+</plist>
