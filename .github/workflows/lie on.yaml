@@ -32,7 +32,6 @@ jobs:
             --app-name ken1key \
             --crt certs/ken1key.crt \
             --p12 certs/ken1key.p12 \
-            --p12-password "ken1pass" \
             --out certs/ken1key.mobileprovision
 
       - name: Sign IPA
