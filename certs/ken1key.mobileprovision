@@ -1,47 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
     <key>AppIDName</key>
     <string>ken1key</string>
 
-    <key>AppIdentifierPrefix</key>
-    <array><string>KRNAPPLO</string></array>
-
     <key>ApplicationIdentifierPrefix</key>
-    <array><string>KRNAPPLO</string></array>
+    <array>
+        <string>KRNAPPLO</string>
+    </array>
+
+    <key>TeamIdentifier</key>
+    <array>
+        <string>KRNAPPLO</string>
+    </array>
 
     <key>DeveloperCertificates</key>
     <array>
-        <data>MIIDkTCCAnmgAwIBAgIUF3rBnihHSvH8kURWY5re4S0EVBgwDQYJKoZIhvcNAQELBQAwWDELMAkGA1UEBhMCVVMxDTALBgNVBAgMBE5vbmUxDTALBgNVBAcMBE5vbmUxEDAOBgNVBAoMB2tlbjFrZXkxGTAXBgNVBAMMEGNvbS5rZW5lbi5pa2lvd2swHhcNMjYwNzMxMTM1MjAyWhcNMjcwNzMxMTM1MjAyWjBYMQswCQYDVQQGEwJVUzENMAsGA1UECAwETm9uZTENMAsGA1UEBwwETm9uZTEQMA4GA1UECgwHa2VuMWtleTEZMBcGA1UEAwwQY29tLmtlbmVuLmlraW93azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKZKvkAF7IPjaKV+n14jqTAkCaG2ZNj7P6FpmnxkYdzIdDZ/eWvaM90keeSmc8jsYjYNwsm7Ewe97deyI/ZkOqSEVLaIEtcyCI5XZaBDe1hz7YODPOb1ZLWKXbjodkawTjwAq0AW7UuTCum5ehxHLhBIQ2P0gex3JNhB2w18ZfgFoJtKE9wRwX59x44QAHbWsoiv+W4kqCTh4FfxfEwf0VLhU4mgJFryldl/z42IPBb8pMw5WlWRfn8s8gPWN8BS9fMlgTLesmryvJO07AZAS3XPMtYX9q/rvtZ+9wHqYGyM24xug6fhhi2V+171r1s2/xmKTQu0vV+Z3q7wDQE0q0ECAwEAAaNTMFEwHQYDVR0OBBYEFJkuwQNkI0/WPb5tECCtSFSs36V8MB8GA1UdIwQYMBaAFJkuwQNkI0/WPb5tECCtSFSs36V8MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBACy4td4I2M1WDLK3RbPJXVATFMYsTDYckhi1riLKBjSt//etx/f8OFddGh3s3ssE87UD58ofu78hvgM2mfrvRXvFzXTRUjszt44MOztocjUNHVvbWZPru5tLv5cfciDP/UpBw61jSoRBX+40OBJvoQ94ta2F05TzH1ftzPxL3EPXVbIXzHfI+XnAjo5sBCzPCMwHbaPdy74ik9DFmjGZh9n9NgosUMCVr9saiHEZLXXJqK4KMBBXozCzZz8mxAyoO5YB44uNX8YU0PaAxira7D2dXTqsicrkByhNQsGUe1t2qF38MM1+AIqfJ6Pat6iTcH4U8oqgcsJs61tNNuJQSBY=</data>
+        <data>MIIDkTCCAnmgAwIBAgIUdCH9dYSXRch0Utd9rPgtu5KhDggwDQYJKoZIhvcNAQELBQAwWDELMAkGA1UEBhMCVVMxDTALBgNVBAgMBE5vbmUxDTALBgNVBAcMBE5vbmUxEDAOBgNVBAoMB2tlbjFrZXkxGTAXBgNVBAMMEGNvbS5rZW5lbi5pa2lvd2swHhcNMjYwNzMxMTQxMTU1WhcNMjcwNzMxMTQxMTU1WjBYMQswCQYDVQQGEwJVUzENMAsGA1UECAwETm9uZTENMAsGA1UEBwwETm9uZTEQMA4GA1UECgwHa2VuMWtleTEZMBcGA1UEAwwQY29tLmtlbmVuLmlraW93azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJ3IiCHAYeWq/2ow7fd1Dfl42weIxBvCbutYJ6Z9+4PxqepF1STKr6pYElwljakZeO+j92Jb1cPUva0yJ/GPhbPTkWgL0yejqpIhwEA3DbQWwamUfQlW9aYTYwHUxrDSUUvrf9pVNwecLf8i1JCxtSTmQWh5qFXzRk6aXD6wy7ELsxaHGD4c/iKiEmWPn+l/9aAI9uGrUMn1LQ1YzRJGSvrL4xL1FsXGgRzO3LEvjZ6xrKQOe+3nBoUBFengN4u2tcfMDESbsg4wvzRA9EAmtk6L11DeHRKW7pJjgdTRVoJKlwGCt4dtmzDGlzJ3n71X0lUT5rBkXWCVNUAhlXfZUqcCAwEAAaNTMFEwHQYDVR0OBBYEFLKdhmrhBM37/8RuAwjhvbop4oHYMB8GA1UdIwQYMBaAFLKdhmrhBM37/8RuAwjhvbop4oHYMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAHT2GcF67d16xtSC9shU4qNmz6yhqCc+thWwnk0HrtbfbjOktwZDMGrKNkX/T13nLWnWCSlzdyjf1Ry9dxpU5Z+VzbSJf6sDiCge0BfDEDr2hq5drBYFujpDpODs2p5lAW0/IBMbhl27yv2Uyn5iTqgpHh9IeD6n5v9hV1y7ZsynBTfqG28J0TOzfoDTgQvvInQf4yb595Y2W88YwDFEKmGYPd7dcvDRCkWZEfstgU14lBBxq3nZ9eqxmycY09UU7lYHBxT2+FY92IVLNwgAl47uZJjh68gceTW0C1DFPyGUksuI6/u9IsuNmOzGMZ3M2tmtjgINsKRcLIt3t7CBtsg=</data>
+    </array>
+
+    <key>DeveloperCertificateHashes</key>
+    <array>
+        <string>1432863B21918E3F450B5E8628BFFFE714C40103</string>
     </array>
 
     <key>Entitlements</key>
     <dict>
         <key>application-identifier</key>
         <string>KRNAPPLO.com.kenen.ikiowk</string>
+
         <key>get-task-allow</key>
         <true/>
+
         <key>keychain-access-groups</key>
-        <array><string>KRNAPPLO.com.kenen.ikiowk</string></array>
+        <array>
+            <string>KRNAPPLO.com.kenen.ikiowk</string>
+        </array>
     </dict>
 
     <key>ExpirationDate</key>
-    <date>2027-07-31T13:52:02.692472</date>
+    <date>2027-07-31T14:11:55.071123</date>
 
     <key>Name</key>
     <string>ken1key Provisioning Profile</string>
-
-    <key>TeamIdentifier</key>
-    <array><string>KRNAPPLO</string></array>
-
-    <key>TimeToLive</key>
-    <integer>365</integer>
 
     <key>UUID</key>
     <string>KEN1KEY-KRNAPPLO-UUID</string>
 
     <key>Version</key>
     <integer>1</integer>
+
 </dict>
 </plist>
