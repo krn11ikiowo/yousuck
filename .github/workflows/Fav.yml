@@ -1,0 +1,58 @@
+name: ken1key-p12-validator
+
+on:
+  workflow_dispatch:
+    inputs:
+      ipa_path:
+        description: "IPA to sign"
+        required: true
+        default: "Geode.ipa"
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-sign:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate P12 identity
+        run: |
+          python3 ken1key_p12_validator.py \
+            --p12 certs/ken1key.p12 \
+            --password ken1pass
+
+      - name: Generate binary CMS mobileprovision
+        run: |
+          python3 ken1key_binary_mobileprovision_gen.py \
+            --team-id KRNAPPLO \
+            --bundle-id com.kenen.ikiowk \
+            --app-name ken1key \
+            --crt certs/ken1key.crt \
+            --p12 certs/ken1key.p12 \
+            --p12-password "ken1pass" \
+            --out certs/ken1key.mobileprovision
+
+      - name: Generate full cert pack identifiers
+        run: |
+          cp certs/ken1key.crt certs/com.kenen.ikiowk.zsigncert
+          cp certs/ken1key.crt certs/com.kenen.ikiowk.ksign
+          cp certs/ken1key.mobileprovision certs/com.kenen.ikiowk.kenprov
+          cp certs/ken1key.p12 certs/ken1key.ken.pfx
+          cp certs/ken1key.crt certs/com.kenen.ikiowk.esigncert
+
+      - name: Upload cert pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ken1key-cert-pack
+          path: |
+            certs/ken1key.key
+           
