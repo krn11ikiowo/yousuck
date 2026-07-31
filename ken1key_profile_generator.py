@@ -7,6 +7,7 @@ Generates:
 - Self-signed certificate (subject aligned with TeamIdentifier)
 - P12
 - Mobileprovision with embedded DER + SHA1 + P12
+- Extra metadata files: .zsigncert, .ksign, .kenprov, .ken.pfx, .esigncert
 """
 
 import argparse
@@ -27,8 +28,6 @@ def generate_private_key(path):
     run(["openssl", "genrsa", "-out", path, "2048"])
 
 def generate_certificate(key_path, cert_path, common_name, team_id):
-    # Subject aligned with TeamIdentifier for UnkeySign:
-    # O = team_id, OU = team_id, CN = bundle_id
     subj = f"/C=US/ST=None/L=None/O={team_id}/OU={team_id}/CN={common_name}"
     run([
         "openssl", "req",
@@ -55,19 +54,15 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path, p12_path):
 
     app_identifier = f"{team_id}.{bundle_id}"
 
-    # Convert certificate to DER
     der_cert_path = "certs/ken1key.der"
     run(["openssl", "x509", "-in", cert_path, "-outform", "der", "-out", der_cert_path])
 
-    # Base64 encode DER certificate
     with open(der_cert_path, "rb") as f:
         der_data = f.read()
     der_b64 = base64.b64encode(der_data).decode("ascii")
 
-    # SHA1 hash of DER (UnkeySign / Apple-style validation)
     cert_sha1 = hashlib.sha1(der_data).hexdigest().upper()
 
-    # Base64 encode P12 (custom extension)
     with open(p12_path, "rb") as f:
         p12_data = f.read()
     p12_b64 = base64.b64encode(p12_data).decode("ascii")
@@ -137,6 +132,54 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path, p12_path):
     with open("certs/ken1key.mobileprovision", "w") as f:
         f.write(profile)
 
+def write_extra_metadata(bundle_id, team_id, name, p12_path, mobileprov_path):
+    base = os.path.join("certs", bundle_id)
+
+    # .zsigncert
+    with open(base + ".zsigncert", "w") as f:
+        f.write(
+            f"name={bundle_id}\n"
+            f"teamID={team_id}\n"
+            f"type=development\n"
+            f"p12=ken1key.p12\n"
+            f"mobileprovision=ken1key.mobileprovision\n"
+        )
+
+    # .ksign
+    with open(base + ".ksign", "w") as f:
+        f.write(
+            f"[sign]\n"
+            f"bundle={bundle_id}\n"
+            f"team={team_id}\n"
+            f"p12=ken1key.p12\n"
+            f"profile=ken1key.mobileprovision\n"
+        )
+
+    # .kenprov
+    with open(base + ".kenprov", "w") as f:
+        f.write(
+            f"APP_NAME={name}\n"
+            f"BUNDLE_ID={bundle_id}\n"
+            f"TEAM_ID={team_id}\n"
+            f"PROFILE=ken1key.mobileprovision\n"
+        )
+
+    # .ken.pfx (just a copy of the p12 for your tooling)
+    ken_pfx_path = os.path.join("certs", "ken1key.ken.pfx")
+    with open(p12_path, "rb") as src, open(ken_pfx_path, "wb") as dst:
+        dst.write(src.read())
+
+    # .esigncert
+    with open(base + ".esigncert", "w") as f:
+        f.write(
+            f"name={bundle_id}\n"
+            f"teamID={team_id}\n"
+            f"type=development\n"
+            f"note=ken1key self-signed cert for {bundle_id}\n"
+            f"p12=ken1key.p12\n"
+            f"mobileprovision=ken1key.mobileprovision\n"
+        )
+
 def main():
     parser = argparse.ArgumentParser(description="Generate UnkeySign-aligned cert + mobileprovision for ken1key")
     parser.add_argument("--bundle-id", default="com.kenen.ikiowk")
@@ -150,19 +193,22 @@ def main():
     key_path = "certs/ken1key.key"
     cert_path = "certs/ken1key.crt"
     p12_path = "certs/ken1key.p12"
+    mobileprov_path = "certs/ken1key.mobileprovision"
 
-    common_name = args.bundle_id  # CN = bundle ID
+    common_name = args.bundle-id if hasattr(args, "bundle-id") else args.bundle_id
 
     generate_private_key(key_path)
-    generate_certificate(key_path, cert_path, common_name, args.team_id)
+    generate_certificate(key_path, cert_path, args.bundle_id, args.team_id)
     generate_p12(key_path, cert_path, p12_path, args.bundle_id, args.password)
     generate_mobileprovision(args.bundle_id, args.team_id, args.name, cert_path, p12_path)
+    write_extra_metadata(args.bundle_id, args.team_id, args.name, p12_path, mobileprov_path)
 
-    print("✓ UnkeySign-aligned cert + mobileprovision generated")
+    print("✓ UnkeySign-aligned cert + mobileprovision + metadata generated")
     print(f"  - Private key: {key_path}")
     print(f"  - Certificate: {cert_path}")
     print(f"  - P12: {p12_path}")
     print("  - Mobileprovision: certs/ken1key.mobileprovision")
+    print("  - Extra: .zsigncert, .ksign, .kenprov, .ken.pfx, .esigncert in certs/")
 
 if __name__ == "__main__":
     main()
