@@ -11,26 +11,23 @@
     <key>ApplicationIdentifierPrefix</key>
     <array><string>KRNAPPLO</string></array>
 
-    <key>CreationDate</key>
-    <date>2026-07-31T13:42:18.887856</date>
-
-    <key>Platform</key>
-    <array><string>iOS</string></array>
+    <key>DeveloperCertificates</key>
+    <array>
+        <data>MIIDkTCCAnmgAwIBAgIUF3rBnihHSvH8kURWY5re4S0EVBgwDQYJKoZIhvcNAQELBQAwWDELMAkGA1UEBhMCVVMxDTALBgNVBAgMBE5vbmUxDTALBgNVBAcMBE5vbmUxEDAOBgNVBAoMB2tlbjFrZXkxGTAXBgNVBAMMEGNvbS5rZW5lbi5pa2lvd2swHhcNMjYwNzMxMTM1MjAyWhcNMjcwNzMxMTM1MjAyWjBYMQswCQYDVQQGEwJVUzENMAsGA1UECAwETm9uZTENMAsGA1UEBwwETm9uZTEQMA4GA1UECgwHa2VuMWtleTEZMBcGA1UEAwwQY29tLmtlbmVuLmlraW93azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKZKvkAF7IPjaKV+n14jqTAkCaG2ZNj7P6FpmnxkYdzIdDZ/eWvaM90keeSmc8jsYjYNwsm7Ewe97deyI/ZkOqSEVLaIEtcyCI5XZaBDe1hz7YODPOb1ZLWKXbjodkawTjwAq0AW7UuTCum5ehxHLhBIQ2P0gex3JNhB2w18ZfgFoJtKE9wRwX59x44QAHbWsoiv+W4kqCTh4FfxfEwf0VLhU4mgJFryldl/z42IPBb8pMw5WlWRfn8s8gPWN8BS9fMlgTLesmryvJO07AZAS3XPMtYX9q/rvtZ+9wHqYGyM24xug6fhhi2V+171r1s2/xmKTQu0vV+Z3q7wDQE0q0ECAwEAAaNTMFEwHQYDVR0OBBYEFJkuwQNkI0/WPb5tECCtSFSs36V8MB8GA1UdIwQYMBaAFJkuwQNkI0/WPb5tECCtSFSs36V8MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBACy4td4I2M1WDLK3RbPJXVATFMYsTDYckhi1riLKBjSt//etx/f8OFddGh3s3ssE87UD58ofu78hvgM2mfrvRXvFzXTRUjszt44MOztocjUNHVvbWZPru5tLv5cfciDP/UpBw61jSoRBX+40OBJvoQ94ta2F05TzH1ftzPxL3EPXVbIXzHfI+XnAjo5sBCzPCMwHbaPdy74ik9DFmjGZh9n9NgosUMCVr9saiHEZLXXJqK4KMBBXozCzZz8mxAyoO5YB44uNX8YU0PaAxira7D2dXTqsicrkByhNQsGUe1t2qF38MM1+AIqfJ6Pat6iTcH4U8oqgcsJs61tNNuJQSBY=</data>
+    </array>
 
     <key>Entitlements</key>
     <dict>
         <key>application-identifier</key>
         <string>KRNAPPLO.com.kenen.ikiowk</string>
-
         <key>get-task-allow</key>
         <true/>
-
         <key>keychain-access-groups</key>
         <array><string>KRNAPPLO.com.kenen.ikiowk</string></array>
     </dict>
 
     <key>ExpirationDate</key>
-    <date>2027-07-31T13:42:18.888178</date>
+    <date>2027-07-31T13:52:02.692472</date>
 
     <key>Name</key>
     <string>ken1key Provisioning Profile</string>
