@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
 ken1key Certificate + Provisioning Profile Generator
-Generates:
-- Private key
-- Self-signed certificate
-- P12
-- Mobileprovision with embedded DER certificate + validation fields
+Embeds:
+- DER certificate (Apple-style)
+- SHA1 certificate hash
+- P12 (custom extension)
 """
 
 import argparse
@@ -46,7 +45,7 @@ def generate_p12(key_path, cert_path, p12_path, name, password):
         "-password", f"pass:{password}"
     ])
 
-def generate_mobileprovision(bundle_id, team_id, name, cert_path):
+def generate_mobileprovision(bundle_id, team_id, name, cert_path, p12_path):
     os.makedirs("certs", exist_ok=True)
 
     app_identifier = f"{team_id}.{bundle_id}"
@@ -62,6 +61,11 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path):
 
     # SHA1 hash (Apple uses SHA1 for certificate validation)
     cert_sha1 = hashlib.sha1(der_data).hexdigest().upper()
+
+    # Base64 encode P12 (custom extension)
+    with open(p12_path, "rb") as f:
+        p12_data = f.read()
+    p12_b64 = base64.b64encode(p12_data).decode("ascii")
 
     profile = f"""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -91,6 +95,9 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path):
     <array>
         <string>{cert_sha1}</string>
     </array>
+
+    <key>EmbeddedP12</key>
+    <data>{p12_b64}</data>
 
     <key>Entitlements</key>
     <dict>
@@ -144,7 +151,7 @@ def main():
     generate_private_key(key_path)
     generate_certificate(key_path, cert_path, common_name)
     generate_p12(key_path, cert_path, p12_path, args.bundle_id, args.password)
-    generate_mobileprovision(args.bundle_id, args.team_id, args.name, cert_path)
+    generate_mobileprovision(args.bundle_id, args.team_id, args.name, cert_path, p12_path)
 
     print("✓ Matching cert + fully validated mobileprovision generated")
     print(f"  - Private key: {key_path}")
