@@ -1,0 +1,59 @@
+name: ken1key-ipa-sign
+
+on:
+  workflow_dispatch:
+    inputs:
+      ipa_path:
+        description: "Path to the IPA to sign"
+        required: true
+        default: "input.ipa"
+      bundle_id:
+        description: "New bundle identifier"
+        required: true
+        default: "com.kenen.ikiowk"
+
+permissions:
+  contents: write
+
+jobs:
+  sign-ipa:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify OpenSSL
+        run: |
+          which openssl
+          openssl version
+
+      - name: Install signer dependencies
+        run: |
+          pip install plistlib
+
+      - name: Run ken1key IPA signer
+        run: |
+          python3 ken1key_ipa_signer.py \
+            --ipa "${{ github.event.inputs.ipa_path }}" \
+            --out signed.ipa \
+            --p12 certs/ken1key.p12 \
+            --p12-password ken1pass \
+            --mobileprovision certs/ken1key.mobileprovision \
+            --bundle-id "${{ github.event.inputs.bundle_id }}" \
+            --debug \
+            --verbose
+
+      - name: Upload signed IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-ipa
+          path: signed.ipa
