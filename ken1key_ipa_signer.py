@@ -96,8 +96,10 @@ def import_p12(p12_path, password, keychain, verbose=False):
         "security", "import", p12_path,
         "-k", keychain,
         "-P", password,
-        "-T", "/usr/bin/codesign"
+        "-T", "/usr/bin/codesign",
+        "-A",  # allow all apps to access, makes identity visible
     ], verbose=verbose)
+
 
 def get_identity_from_keychain(keychain, verbose=False):
     out = run(["security", "find-identity", "-v", "-p", "codesigning", keychain], verbose=verbose)
