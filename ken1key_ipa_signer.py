@@ -143,7 +143,6 @@ def resign_app(app_path, identity, entitlements_path, verbose=False):
                     "--timestamp=none",
                     full
                 ], verbose=verbose)
-
 def create_temp_keychain(verbose=False):
     tmp = tempfile.NamedTemporaryFile(delete=False)
     tmp.close()
@@ -151,6 +150,8 @@ def create_temp_keychain(verbose=False):
     run(["security", "create-keychain", "-p", "ken1keypass", keychain], verbose=verbose)
     run(["security", "set-keychain-settings", keychain], verbose=verbose)
     run(["security", "unlock-keychain", "-p", "ken1keypass", keychain], verbose=verbose)
+    # make sure this keychain is in the search list
+    run(["security", "list-keychains", "-s", keychain], verbose=verbose)
     return keychain
 
 def delete_temp_keychain(keychain, verbose=False):
