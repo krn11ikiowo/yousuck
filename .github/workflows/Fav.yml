@@ -23,6 +23,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Generate valid ken1key P12 from key + cert
+        run: |
+          openssl pkcs12 -export \
+            -inkey certs/ken1key_private.key \
+            -in certs/ken1key_cert.pem \
+            -out certs/ken1key.p12 \
+            -password pass:ken1pass
+
 
       - name: Validate P12 identity
         run: |
