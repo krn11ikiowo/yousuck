@@ -1,4 +1,4 @@
-name: ken1key-binary-cert-pack-and-html
+name: ken1key-binary-cert-pack
 
 on:
   workflow_dispatch:
@@ -44,6 +44,21 @@ jobs:
           cp certs/ken1key.mobileprovision certs/com.kenen.ikiowk.kenprov
           cp certs/ken1key.p12 certs/ken1key.ken.pfx
           cp certs/ken1key.crt certs/com.kenen.ikiowk.esigncert
+
+      - name: Upload cert pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ken1key-cert-pack
+          path: |
+            certs/ken1key.key
+            certs/ken1key.crt
+            certs/ken1key.p12
+            certs/ken1key.mobileprovision
+            certs/com.kenen.ikiowk.zsigncert
+            certs/com.kenen.ikiowk.ksign
+            certs/com.kenen.ikiowk.kenprov
+            certs/ken1key.ken.pfx
+            certs/com.kenen.ikiowk.esigncert
 
       - name: Sign IPA
         run: |
