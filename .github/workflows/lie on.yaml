@@ -1,4 +1,4 @@
-name: ken1key-full-sign
+name: ken1key-full-cert-pack
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  sign:
+  generate-and-sign:
     runs-on: macos-15
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Generate final mobileprovision
+      - name: Generate cert pack + mobileprovision
         run: |
           python3 ken1key_profile_generator.py \
             --team-id KRNAPPLO \
@@ -52,3 +52,18 @@ jobs:
         with:
           name: signed-ipa
           path: signed.ipa
+
+      - name: Upload full cert pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: ken1key-cert-pack
+          path: |
+            certs/ken1key.key
+            certs/ken1key.crt
+            certs/ken1key.p12
+            certs/ken1key.mobileprovision
+            certs/com.kenen.ikiowk.zsigncert
+            certs/com.kenen.ikiowk.ksign
+            certs/com.kenen.ikiowk.kenprov
+            certs/ken1key.ken.pfx
+            certs/com.kenen.ikiowk.esigncert
