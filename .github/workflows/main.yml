@@ -17,6 +17,10 @@ jobs:
           clean: false
           fetch-depth: 0
 
+      - name: Rename generator to .py
+        run: |
+          mv "fearn_cert_provisioning_generator 2.txt" fearn_cert_provisioning_generator.py
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -31,10 +35,9 @@ jobs:
         run: |
           python3 fearn_cert_provisioning_generator.py \
             --bundle-id com.kenen.ikiowk \
-            --team-id LOCALTEAMID \
+            --team-id KRNAPPLO \
             --name ken1key \
-            --password ken1pass \
-            --verbose
+            --password ken1pass
 
       - name: Verify generated files
         run: |
@@ -47,5 +50,5 @@ jobs:
       - name: Commit generated certs
         run: |
           git add certs
-          git commit -m "ken1key: generated matching certs + mobileprovision" || echo "no changes"
+          git commit -m "ken1key: generated matching certs + mobileprovision (TEAM ID KRNAPPLO)" || echo "no changes"
           git push || echo "nothing to push"
