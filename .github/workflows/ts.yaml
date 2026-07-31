@@ -1,0 +1,84 @@
+name: ken1key-binary-cert-pack-and-html
+
+on:
+  workflow_dispatch:
+    inputs:
+      ipa_path:
+        description: "IPA to sign"
+        required: true
+        default: "Geode.ipa"
+
+permissions:
+  contents: write
+
+jobs:
+  generate-sign-and-push-html:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate binary CMS mobileprovision
+        run: |
+          python3 ken1key_binary_mobileprovision_gen.py \
+            --team-id KRNAPPLO \
+            --bundle-id com.kenen.ikiowk \
+            --app-name ken1key \
+            --crt certs/ken1key.crt \
+            --p12 certs/ken1key.p12 \
+            --p12-password "ken1pass" \
+            --out certs/ken1key.mobileprovision
+
+      - name: Generate full cert pack identifiers
+        run: |
+          cp certs/ken1key.crt certs/com.kenen.ikiowk.zsigncert
+          cp certs/ken1key.crt certs/com.kenen.ikiowk.ksign
+          cp certs/ken1key.mobileprovision certs/com.kenen.ikiowk.kenprov
+          cp certs/ken1key.p12 certs/ken1key.ken.pfx
+          cp certs/ken1key.crt certs/com.kenen.ikiowk.esigncert
+
+      - name: Sign IPA
+        run: |
+          python3 ken1key_ipa_signer.py \
+            --ipa "${{ github.event.inputs.ipa_path }}" \
+            --out signed.ipa \
+            --p12 certs/ken1key.p12 \
+            --p12-password "ken1pass" \
+            --mobileprovision certs/ken1key.mobileprovision \
+            --bundle-id "com.kenen.ikiowk" \
+            --debug \
+            --verbose
+
+      - name: Create HTML summary page
+        run: |
+          echo "<html><head><title>ken1key Cert Pack</title></head><body>" > index.html
+          echo "<h1>ken1key Binary Cert Pack Generated</h1>" >> index.html
+          echo "<p>Signed IPA: signed.ipa</p>" >> index.html
+          echo "<ul>" >> index.html
+          echo "<li>ken1key.key</li>" >> index.html
+          echo "<li>ken1key.crt</li>" >> index.html
+          echo "<li>ken1key.p12</li>" >> index.html
+          echo "<li>ken1key.mobileprovision (binary CMS)</li>" >> index.html
+          echo "<li>com.kenen.ikiowk.zsigncert</li>" >> index.html
+          echo "<li>com.kenen.ikiowk.ksign</li>" >> index.html
+          echo "<li>com.kenen.ikiowk.kenprov</li>" >> index.html
+          echo "<li>ken1key.ken.pfx</li>" >> index.html
+          echo "<li>com.kenen.ikiowk.esigncert</li>" >> index.html
+          echo "</ul>" >> index.html
+          echo "</body></html>" >> index.html
+
+      - name: Commit and push HTML
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add index.html
+          git commit -m "Add generated HTML summary page"
+          git push
