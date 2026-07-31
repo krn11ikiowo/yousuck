@@ -1,63 +1,54 @@
-name: ken1key-mobileprovision-generator
+name: ken1key-full-sign
 
 on:
   workflow_dispatch:
     inputs:
-      bundle_id:
-        description: "Bundle ID for the app"
+      ipa_path:
+        description: "IPA to sign"
         required: true
-        default: "com.kenen.ikiowk"
-      team_id:
-        description: "Team ID for code signing"
-        required: true
-        default: "KRNAPPLO"
-      app_name:
-        description: "App name"
-        required: true
-        default: "ken1key"
-      p12_password:
-        description: "Password for P12"
-        required: true
-        default: "ken1pass"
+        default: "Geode.ipa"
 
 permissions:
   contents: write
 
 jobs:
-  generate-profile:
+  sign:
     runs-on: macos-15
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          clean: false
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Verify OpenSSL
-        run: |
-          which openssl
-          openssl version
-
-      - name: Run ken1key profile generator
+      - name: Generate final mobileprovision
         run: |
           python3 ken1key_profile_generator.py \
-            --bundle-id "${{ github.event.inputs.bundle_id }}" \
-            --team-id "${{ github.event.inputs.team_id }}" \
-            --name "${{ github.event.inputs.app_name }}" \
-            --password "${{ github.event.inputs.p12_password }}"
+            --team-id KRNAPPLO \
+            --bundle-id com.kenen.ikiowk \
+            --app-name ken1key \
+            --crt certs/ken1key.crt \
+            --p12 certs/ken1key.p12 \
+            --p12-password "ken1pass" \
+            --out certs/ken1key.mobileprovision
 
-      - name: List generated files
+      - name: Sign IPA
         run: |
-          ls -R certs
+          python3 ken1key_ipa_signer.py \
+            --ipa "${{ github.event.inputs.ipa_path }}" \
+            --out signed.ipa \
+            --p12 certs/ken1key.p12 \
+            --p12-password "ken1pass" \
+            --mobileprovision certs/ken1key.mobileprovision \
+            --bundle-id "com.kenen.ikiowk" \
+            --debug \
+            --verbose
 
-      - name: Upload generated signing assets
+      - name: Upload signed IPA
         uses: actions/upload-artifact@v4
         with:
-          name: ken1key-signing-assets
-          path: certs
+          name: signed-ipa
+          path: signed.ipa
