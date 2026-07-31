@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
 ken1key Certificate + Provisioning Profile Generator
-Embeds:
-- DER certificate (Apple-style)
-- SHA1 certificate hash
-- P12 (custom extension)
+
+Generates:
+- Private key
+- Self-signed certificate (subject aligned with TeamIdentifier)
+- P12
+- Mobileprovision with embedded DER + SHA1 + P12
 """
 
 import argparse
@@ -24,14 +26,17 @@ def generate_private_key(path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     run(["openssl", "genrsa", "-out", path, "2048"])
 
-def generate_certificate(key_path, cert_path, common_name):
+def generate_certificate(key_path, cert_path, common_name, team_id):
+    # Subject aligned with TeamIdentifier for UnkeySign:
+    # O = team_id, OU = team_id, CN = bundle_id
+    subj = f"/C=US/ST=None/L=None/O={team_id}/OU={team_id}/CN={common_name}"
     run([
         "openssl", "req",
         "-new", "-x509",
         "-key", key_path,
         "-out", cert_path,
         "-days", "365",
-        "-subj", f"/C=US/ST=None/L=None/O=ken1key/CN={common_name}"
+        "-subj", subj
     ])
 
 def generate_p12(key_path, cert_path, p12_path, name, password):
@@ -59,7 +64,7 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path, p12_path):
         der_data = f.read()
     der_b64 = base64.b64encode(der_data).decode("ascii")
 
-    # SHA1 hash (Apple uses SHA1 for certificate validation)
+    # SHA1 hash of DER (UnkeySign / Apple-style validation)
     cert_sha1 = hashlib.sha1(der_data).hexdigest().upper()
 
     # Base64 encode P12 (custom extension)
@@ -133,7 +138,7 @@ def generate_mobileprovision(bundle_id, team_id, name, cert_path, p12_path):
         f.write(profile)
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate matching cert + mobileprovision for ken1key")
+    parser = argparse.ArgumentParser(description="Generate UnkeySign-aligned cert + mobileprovision for ken1key")
     parser.add_argument("--bundle-id", default="com.kenen.ikiowk")
     parser.add_argument("--team-id", default="KRNAPPLO")
     parser.add_argument("--name", default="ken1key")
@@ -149,11 +154,11 @@ def main():
     common_name = args.bundle_id  # CN = bundle ID
 
     generate_private_key(key_path)
-    generate_certificate(key_path, cert_path, common_name)
+    generate_certificate(key_path, cert_path, common_name, args.team_id)
     generate_p12(key_path, cert_path, p12_path, args.bundle_id, args.password)
     generate_mobileprovision(args.bundle_id, args.team_id, args.name, cert_path, p12_path)
 
-    print("✓ Matching cert + fully validated mobileprovision generated")
+    print("✓ UnkeySign-aligned cert + mobileprovision generated")
     print(f"  - Private key: {key_path}")
     print(f"  - Certificate: {cert_path}")
     print(f"  - P12: {p12_path}")
